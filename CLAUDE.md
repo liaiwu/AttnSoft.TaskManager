@@ -1,0 +1,1 @@
+E:/app/attnsoft/attnsoft.taskmanager/README.md
