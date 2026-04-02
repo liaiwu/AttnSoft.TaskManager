@@ -1,0 +1,62 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <TargetFramework>net472</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>enable</ImplicitUsings>
+	<LangVersion>latest</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Commands\StartWorkbenchCommand.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Quartz" Version="3.16.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="AttnSoft.DevControls">
+      <HintPath>..\..\DevExpress\DLL\net462\AttnSoft.DevControls.dll</HintPath>
+    </Reference>
+    <Reference Include="AttnSoft.SharpDevelop.Core">
+      <HintPath>..\..\DevExpress\DLL\net462\AttnSoft.SharpDevelop.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="AttnSoft.SqlData">
+      <HintPath>..\..\DevExpress\DLL\net462\AttnSoft.SqlData.dll</HintPath>
+    </Reference>
+    <Reference Include="AttnSoft.Windows.Workbench">
+      <HintPath>..\..\DevExpress\DLL\net462\AttnSoft.Windows.Workbench.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.Utils.v25.2">
+      <HintPath>..\..\..\DevExpressDLL\DevExpress.Utils.v25.2.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.XtraBars.v25.2">
+      <HintPath>..\..\..\DevExpressDLL\DevExpress.XtraBars.v25.2.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.XtraEditors.v25.2">
+      <HintPath>..\..\..\DevExpressDLL\DevExpress.XtraEditors.v25.2.dll</HintPath>
+    </Reference>
+    <Reference Include="log4net">
+      <HintPath>..\..\DevExpress\DLL\net462\log4net.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
+</Project>
