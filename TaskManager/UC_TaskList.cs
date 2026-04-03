@@ -20,7 +20,7 @@ namespace TaskManager
             QuartzHelper.OnVetoJobExecution += QuartzHelper_OnVetoJobExecution;
             QuartzHelper.OnTriggerComplete += QuartzHelper_OnTriggerComplete;
 
-            LoadData();
+            _ = LoadData();
         }
 
         static UC_TaskList()
@@ -79,16 +79,21 @@ namespace TaskManager
             return TimeZoneInfo.ConvertTime(fireTime, TimeZoneInfo.Local).DateTime;
         }
 
-        public void LoadData()
+        public async Task LoadData()
         {
+            var listTasks = TaskUtilService.Instance.GetAll();
             lock (rootlock)
             {
                 this.listView1.Items.Clear();
 
-                foreach (TaskUtil task in TaskUtilService.Instance.GetAll())
+                foreach (TaskUtil task in listTasks)
                 {
                     AddItem(task);
                 }
+            }
+            foreach (TaskUtil task in listTasks)
+            {
+                await QuartzHelper.ScheduleJob(task);
             }
         }
 
@@ -135,7 +140,7 @@ namespace TaskManager
                 if (this.listView1.SelectedItems.Count > 0)
                 {
                     ListViewItem item = this.listView1.SelectedItems[0];
-                    TaskUtil task = item.Tag as TaskUtil;
+                    var task = item.Tag as TaskUtil;
                     if (task != null)
                     {
                         Fm_Task fmtask = new Fm_Task();
@@ -144,7 +149,7 @@ namespace TaskManager
                         {
                             TaskUtilService.Instance.SaveChanges(fmtask.Task);
                             UpdateItem(item, task, item.StateImageIndex);
-                            await QuartzHelper.ScheduleJob(task, true);
+                            await QuartzHelper.ScheduleJob(task);
                         }
                     }
                 }
@@ -157,7 +162,7 @@ namespace TaskManager
 
         private void UpdateItem(string taskid, int stateIndex, DateTime nextRunTime)
         {
-            ListViewItem item = FindItem(taskid);
+            ListViewItem? item = FindItem(taskid);
             if (item != null)
             {
                 if (stateIndex == 0)
@@ -193,11 +198,11 @@ namespace TaskManager
             tlbtn_Edit_Click(this.listView1, e);
         }
 
-        private ListViewItem FindItem(string taskid)
+        private ListViewItem? FindItem(string taskid)
         {
             foreach (ListViewItem item in this.listView1.Items)
             {
-                TaskUtil task = item.Tag as TaskUtil;
+                var task = item.Tag as TaskUtil;
                 if (task != null && task.TaskID.ToString().Equals(taskid, StringComparison.OrdinalIgnoreCase))
                 {
                     return item;
@@ -214,7 +219,7 @@ namespace TaskManager
                 if (this.listView1.SelectedItems.Count > 0)
                 {
                     ListViewItem item = this.listView1.SelectedItems[0];
-                    TaskUtil task = item.Tag as TaskUtil;
+                    var task = item.Tag as TaskUtil;
                     if (task != null && MessageService.AskQuestion("您要删除此任务吗？"))
                     {
                         TaskUtilService.Instance.Delete(task);
@@ -239,12 +244,12 @@ namespace TaskManager
                 if (this.listView1.SelectedItems.Count > 0)
                 {
                     ListViewItem item = this.listView1.SelectedItems[0];
-                    TaskUtil task = item.Tag as TaskUtil;
+                    var task = item.Tag as TaskUtil;
                     if (task != null)
                     {
                         task.Status = TaskUtil.TaskStatus.RUN;
                         TaskUtilService.Instance.SaveChanges(task);
-                        await QuartzHelper.ScheduleJob(task, true);
+                        await QuartzHelper.ScheduleJob(task);
                         UpdateItem(item, task, 0);
                         MessageService.ShowMessage("任务已启动！");
                     }
@@ -263,12 +268,12 @@ namespace TaskManager
                 if (this.listView1.SelectedItems.Count > 0)
                 {
                     ListViewItem item = this.listView1.SelectedItems[0];
-                    TaskUtil task = item.Tag as TaskUtil;
+                    var task = item.Tag as TaskUtil;
                     if (task != null)
                     {
                         task.Status = TaskUtil.TaskStatus.STOP;
                         TaskUtilService.Instance.SaveChanges(task);
-                        await QuartzHelper.ScheduleJob(task, true);
+                        await QuartzHelper.ScheduleJob(task);
                         UpdateItem(item, task, 0);
                         MessageService.ShowMessage("任务已停止！");
                     }
@@ -284,8 +289,7 @@ namespace TaskManager
         {
             try
             {
-                LoadData();
-                await QuartzHelper.Refresh();
+                await LoadData();
             }
             catch (Exception ex)
             {
@@ -300,7 +304,7 @@ namespace TaskManager
                 if (this.listView1.SelectedItems.Count > 0)
                 {
                     ListViewItem item = this.listView1.SelectedItems[0];
-                    TaskUtil task = item.Tag as TaskUtil;
+                    var task = item.Tag as TaskUtil;
                     if (task != null)
                     {
                         using (WaitDialog wtdialog = new WaitDialog())

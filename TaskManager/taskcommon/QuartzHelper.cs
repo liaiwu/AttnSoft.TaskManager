@@ -46,7 +46,7 @@ namespace TaskManager.TaskCommon
         }
 
         /// <summary>
-        /// Job执行时调用
+        /// Job 执行时调用
         /// </summary>
         public static event TriggerFiredEvent OnTriggerFired
         {
@@ -55,7 +55,7 @@ namespace TaskManager.TaskCommon
         }
 
         /// <summary>
-        /// Trigger触发后，job执行时调用本方法。true即否决，job后面不执行。
+        /// Trigger 触发后，job 执行时调用本方法。true 即否决，job 后面不执行。
         /// </summary>
         public static event VetoJobExecutionEvent OnVetoJobExecution
         {
@@ -64,7 +64,7 @@ namespace TaskManager.TaskCommon
         }
 
         /// <summary>
-        /// Job完成时调用
+        /// Job 完成时调用
         /// </summary>
         public static event TriggerCompleteEvent OnTriggerComplete
         {
@@ -149,15 +149,14 @@ namespace TaskManager.TaskCommon
         }
 
         /// <summary>
-        /// 启用任务
+        /// 启用任务（如果任务已存在，先删除旧任务再添加新任务）
         /// </summary>
         /// <param name="taskUtil">任务信息</param>
-        /// <param name="isDeleteOldTask">是否删除原有任务</param>
-        public static async Task ScheduleJob(TaskUtil taskUtil, bool isDeleteOldTask = false)
+        public static async Task ScheduleJob(TaskUtil taskUtil)
         {
             IScheduler currentScheduler = await EnsureSchedulerAsync().ConfigureAwait(false);
             await RegisterTriggerListenerAsync(currentScheduler).ConfigureAwait(false);
-            await ScheduleJobInternalAsync(taskUtil, isDeleteOldTask, currentScheduler).ConfigureAwait(false);
+            await ScheduleJobInternalAsync(taskUtil, currentScheduler).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -175,7 +174,7 @@ namespace TaskManager.TaskCommon
             if (await currentScheduler!.CheckExists(jobKey).ConfigureAwait(false))
             {
                 await currentScheduler.PauseJob(jobKey).ConfigureAwait(false);
-                LogHelper.WriteLog(string.Format("任务“{0}”已经暂停", jobName));
+                LogHelper.WriteLog($"任务{jobName}已经暂停");
             }
         }
 
@@ -194,7 +193,7 @@ namespace TaskManager.TaskCommon
             if (await currentScheduler!.CheckExists(jobKey).ConfigureAwait(false))
             {
                 await currentScheduler.ResumeJob(jobKey).ConfigureAwait(false);
-                LogHelper.WriteLog(string.Format("任务“{0}”恢复运行", jobName));
+                LogHelper.WriteLog($"任务{jobName}恢复运行");
             }
         }
 
@@ -214,7 +213,7 @@ namespace TaskManager.TaskCommon
             JobKey jobKey = new JobKey(task.TaskID.ToString());
             if (!await currentScheduler!.CheckExists(jobKey).ConfigureAwait(false))
             {
-                throw new InvalidOperationException(string.Format("任务“{0}”不存在或未加入调度器，无法立即执行。", task.TaskName));
+                throw new InvalidOperationException($"任务{task.TaskName}不存在或未加入调度器，无法立即执行。");
             }
 
             await currentScheduler.TriggerJob(jobKey).ConfigureAwait(false);
@@ -288,7 +287,7 @@ namespace TaskManager.TaskCommon
         }
 
         /// <summary>
-        /// 校验字符串是否为正确的Cron表达式
+        /// 校验字符串是否为正确的 Cron 表达式
         /// </summary>
         public static bool ValidExpression(string cronExpression)
         {
@@ -376,34 +375,33 @@ namespace TaskManager.TaskCommon
             {
                 try
                 {
-                    await ScheduleJobInternalAsync(taskUtil, false, currentScheduler).ConfigureAwait(false);
+                    await ScheduleJobInternalAsync(taskUtil, currentScheduler).ConfigureAwait(false);
                 }
                 catch (Exception ex)
                 {
-                    LogHelper.WriteLog(string.Format("任务“{0}”启动失败！", taskUtil.TaskName), ex);
+                    LogHelper.WriteLog($"任务{taskUtil.TaskName}启动失败！", ex);
                 }
             }
         }
 
-        private static async Task ScheduleJobInternalAsync(TaskUtil taskUtil, bool isDeleteOldTask, IScheduler currentScheduler)
+        private static async Task ScheduleJobInternalAsync(TaskUtil taskUtil, IScheduler currentScheduler)
         {
             if (taskUtil == null)
             {
                 throw new ArgumentNullException(nameof(taskUtil));
             }
 
-            if (isDeleteOldTask)
-            {
-                await DeleteJobInternalAsync(new JobKey(taskUtil.TaskID.ToString()), currentScheduler).ConfigureAwait(false);
-            }
-
             if (!ValidExpression(taskUtil.CronExpressionString))
             {
-                throw new Exception(taskUtil.CronExpressionString + "不是正确的Cron表达式,无法启动该任务!");
+                throw new InvalidOperationException($"无效的 Cron 表达式：{taskUtil.CronExpressionString}");
             }
 
-            Type jobType = GetClassInfo(taskUtil.Assembly, taskUtil.Class);
             JobKey jobKey = new JobKey(taskUtil.TaskID.ToString());
+
+            // 如果任务已存在，先删除（支持更新场景）
+            await DeleteJobInternalAsync(jobKey, currentScheduler).ConfigureAwait(false);
+
+            Type jobType = GetClassInfo(taskUtil.Assembly, taskUtil.Class);
             TriggerKey triggerKey = new TriggerKey(taskUtil.TaskID.ToString());
 
             IJobDetail job = JobBuilder.Create(jobType)
@@ -421,6 +419,8 @@ namespace TaskManager.TaskCommon
                 .Build();
 
             await currentScheduler.ScheduleJob(job, trigger).ConfigureAwait(false);
+
+            // 如果状态为停止，则暂停任务
             if (taskUtil.Status == TaskUtil.TaskStatus.STOP)
             {
                 await currentScheduler.PauseJob(jobKey).ConfigureAwait(false);
@@ -434,7 +434,7 @@ namespace TaskManager.TaskCommon
                 bool deleted = await currentScheduler.DeleteJob(jobKey).ConfigureAwait(false);
                 if (deleted)
                 {
-                    LogHelper.WriteLog(string.Format("任务“{0}”已经删除", jobKey.Name));
+                    LogHelper.WriteLog($"任务{jobKey.Name}已经删除");
                 }
             }
         }

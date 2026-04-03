@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace TaskManager.BaseObjects
 {
-    internal class TaskUtilService:EntityService<TaskUtil>
+    public class TaskUtilService:EntityService<TaskUtil>
     {
         public override IDBServer DbServer
         {

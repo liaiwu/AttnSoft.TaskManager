@@ -6,3 +6,5 @@
 /TaskManager/.vs
 /TaskManager/bin
 /TaskManager/obj
+/TaskManager.Test/bin
+/TaskManager.Test/obj
