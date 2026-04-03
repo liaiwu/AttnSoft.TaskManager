@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<AttnSoftProperties>
+  <Properties>
+    <CoreProperties.UILanguage value="zh-Hans" />
+    <Properties name="DisplayBindingService">
+      <Default.resources value="" />
+      <Array name="ExternalProcesses" />
+    </Properties>
+    <Properties name="ICSharpCode.SharpDevelop.Gui.FullscreenOptions">
+      <HideMainMenu value="False" />
+      <HideStatusBar value="True" />
+      <HideToolbars value="True" />
+      <ShowMainMenuOnMouseMove value="True" />
+      <ShowStatusBarOnMouseMove value="True" />
+    </Properties>
+    <ICSharpCode.SharpDevelop.Gui.StatusBarVisible value="True" />
+    <ICSharpCode.SharpDevelop.Gui.ToolBarVisible value="True" />
+    <ICSharpCode.SharpDevelop.Gui.UseProfessionalRenderer value="True" />
+    <LayoutThemeType value="VS2015Blue" />
+    <Properties name="RecentOpen">
+      <Array name="Files">
+        <Element value="D:\HongTai\Codes\Winform\TaskManager2025\Data\resources\StringResources.zh-Hans.resources" />
+      </Array>
+      <Array name="Projects" />
+    </Properties>
+    <SharpDevelop.FileChangeWatcher.DetectExternalChanges value="True" />
+    <SharpDevelop.LoadDocumentProperties value="True" />
+    <Properties name="SharpDevelop.UI.OutputWindowOptions">
+      <DefaultFont value="[Font: Name=Consolas, Size=10, Units=3, GdiCharSet=1, GdiVerticalFont=False]" />
+      <WordWrap value="True" />
+    </Properties>
+    <Properties name="WorkbenchMemento">
+      <bounds value="207,177,871,549" />
+      <defaultstate value="Normal" />
+      <windowstate value="Normal" />
+    </Properties>
+  </Properties>
+</AttnSoftProperties>

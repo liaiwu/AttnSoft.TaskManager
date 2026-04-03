@@ -1,0 +1,48 @@
+﻿<SharpDevelopProperties>
+  <CoreProperties.UILanguage value="zh-Hans" />
+  <DefaultDataBase value="MESInterfaceDB" />
+  <Properties name="DisplayBindingService">
+    <Array name="ExternalProcesses" />
+  </Properties>
+  <Properties name="ICSharpCode.SharpDevelop.Gui.FullscreenOptions">
+    <HideMainMenu value="False" />
+    <HideStatusBar value="True" />
+    <HideToolbars value="True" />
+    <ShowMainMenuOnMouseMove value="True" />
+    <ShowStatusBarOnMouseMove value="True" />
+  </Properties>
+  <ICSharpCode.SharpDevelop.Gui.StatusBarVisible value="True" />
+  <ICSharpCode.SharpDevelop.Gui.ToolBarVisible value="True" />
+  <ICSharpCode.SharpDevelop.Gui.UseProfessionalRenderer value="True" />
+  <InitMasterDBFileTimeToken value="2019081404:11:35" />
+  <LayoutThemeType value="VS2015Blue" />
+  <PrvLoginCOMP value="2" />
+  <PrvLoginUsr value="SA" />
+  <Properties name="RecentOpen">
+    <Files value="" />
+    <Projects value="" />
+  </Properties>
+  <RegStr value="D47B-7452-6E43-3DFA" />
+  <SharpDevelop.LoadDocumentProperties value="True" />
+  <SharpDevelop.LoadPrevProjectOnStartup value="False" />
+  <Properties name="SmartDeviceConfig">
+    <Properties name="SelectModelID">
+      <System.Windows.Forms.FlowLayoutPanel_EwatchDataPickBarCode_Options value="" />
+    </Properties>
+    <Properties name="System.Windows.Forms.FlowLayoutPanel_EwatchDataPickBarCode_Options">
+      <Baud value="9600" />
+      <COM value="COM1" />
+      <Data value="7" />
+      <DecPoit value="0" />
+      <Parity value="None" />
+      <SlaveAddress value="0" />
+      <Stop value="One" />
+    </Properties>
+  </Properties>
+  <SqlConfig value="RGF0YSBTb3VyY2U9KGxvY2FsKTtJbml0aWFsIENhdGFsb2c9U2hlbmdaaGlEQjtVc2VyIElEPXNhO1Bhc3N3b3JkPTEyMztDb25uZWN0IFRpbWVvdXQ9MTgw" />
+  <Properties name="WorkbenchMemento">
+    <bounds value="-1483,488,1057,524" />
+    <defaultstate value="Normal" />
+    <windowstate value="Normal" />
+  </Properties>
+</SharpDevelopProperties>

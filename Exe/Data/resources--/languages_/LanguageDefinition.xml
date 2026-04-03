@@ -1,0 +1,9 @@
+<Languages>
+	<Languages name="Chinese (GB)"                  code="cn-gb"    page=""  icon="chinalg.png" />
+	<Languages name="Chinese (BIG5)"                code="cn-big"   page=""  icon="chinalg.png" />
+	<Languages name="English"         		code="en"       page=""  icon="uk.png" />
+	<Languages name="Korean"                        code="kr"       page=""  icon="south_korea.png" />
+	<Languages name="Japanese"                      code="jp"       page=""  icon="japan.png" />
+	
+</Languages>
+
