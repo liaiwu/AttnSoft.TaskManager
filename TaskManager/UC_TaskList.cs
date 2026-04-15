@@ -1,5 +1,6 @@
 using AttnSoft.DevControls;
 using ICSharpCode.Core;
+using ICSharpCode.SharpDevelop;
 using ICSharpCode.SharpDevelop.Gui;
 using System;
 using System.Globalization;
@@ -18,9 +19,8 @@ namespace TaskManager
         {
             InitializeComponent();
             QuartzHelper.OnVetoJobExecution += QuartzHelper_OnVetoJobExecution;
+            QuartzHelper.OnTriggerFired += QuartzHelper_OnTriggerFired;
             QuartzHelper.OnTriggerComplete += QuartzHelper_OnTriggerComplete;
-
-            _ = LoadData();
         }
 
         static UC_TaskList()
@@ -38,11 +38,29 @@ namespace TaskManager
                 }
             };
         }
+        protected override void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
+            SD.Workbench.ToolBarVisible = false;
+            _ = LoadData();
+        }
+
+        void QuartzHelper_OnTriggerFired(Quartz.ITrigger trigger, Quartz.IJobExecutionContext context)
+        {
+            string taskName = GetTaskDisplayName(context);
+            string timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+            WriteOutputLog($"[{timestamp}] [{taskName}] 开始执行任务");
+        }
 
         void QuartzHelper_OnTriggerComplete(Quartz.ITrigger trigger, Quartz.IJobExecutionContext context, Quartz.SchedulerInstruction triggerInstructionCode)
         {
             string taskid = trigger.JobKey.Name;
             DateTime nextRuntime = GetNextRuntime(context);
+            string taskName = GetTaskDisplayName(context);
+            string timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+
+            // 输出任务完成日志
+            WriteOutputLog($"[{timestamp}] [{taskName}] 任务完成");
 
             if (this.InvokeRequired)
             {
@@ -71,6 +89,31 @@ namespace TaskManager
             }
 
             return false;
+        }
+
+        private void WriteOutputLog(string message)
+        {
+            try
+            {
+                SD.MainThread.InvokeIfRequired(() =>
+                {
+                    var output = SD.OutputPad.CurrentCategory;
+                    output.AppendLine(message);
+                });
+            }
+            catch { }
+        }
+
+        private string GetTaskDisplayName(Quartz.IJobExecutionContext context)
+        {
+            // JobDetail.Description 中存储的是任务名称 (TaskName)
+            var description = context.JobDetail.Description;
+            if (!string.IsNullOrEmpty(description))
+            {
+                return description;
+            }
+            // 回退到使用 TaskID
+            return context.JobDetail.Key.Name;
         }
 
         private static DateTime GetNextRuntime(Quartz.IJobExecutionContext context)

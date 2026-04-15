@@ -8,6 +8,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
 	<LangVersion>latest</LangVersion>
     <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
+	  <Platforms>x86;x64;AnyCPU;</Platforms><!--这是支持的平台-->
+	  <PlatformTarget>x86</PlatformTarget><!--这是编译生成的平台-->
   </PropertyGroup>
 
   <ItemGroup>
@@ -15,6 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="AttnSoft.SqlData" Version="5.5.2" />
     <PackageReference Include="Quartz" Version="3.16.1" />
     <PackageReference Include="System.Resources.Extensions" Version="4.6.0" />
   </ItemGroup>
@@ -25,9 +28,6 @@
     </Reference>
     <Reference Include="AttnSoft.SharpDevelop.Core">
       <HintPath>..\..\DevExpress\DLL\net462\AttnSoft.SharpDevelop.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="AttnSoft.SqlData">
-      <HintPath>..\..\DevExpress\DLL\net462\AttnSoft.SqlData.dll</HintPath>
     </Reference>
     <Reference Include="AttnSoft.Windows.Workbench">
       <HintPath>..\..\DevExpress\DLL\net462\AttnSoft.Windows.Workbench.dll</HintPath>
