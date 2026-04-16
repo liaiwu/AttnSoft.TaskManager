@@ -7,9 +7,9 @@ namespace TaskManager.Commands
     {
         public override void Run()
         {
-            DevExpress.XtraEditors.ButtonEdit txtBoxButton = Owner as DevExpress.XtraEditors.ButtonEdit;
+            DevExpress.XtraEditors.ButtonEdit? txtBoxButton = Owner as DevExpress.XtraEditors.ButtonEdit;
 
-            if (txtBoxButton.Text != null)
+            if (txtBoxButton?.Text != null)
             {
                 UC_EXESqlSetting ucExeSql = new UC_EXESqlSetting();
                 Fm_ControlContainer fmContainer = new Fm_ControlContainer(ucExeSql);

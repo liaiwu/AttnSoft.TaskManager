@@ -28,7 +28,9 @@ namespace TaskManager.TaskCommon
 
         private static IScheduler? scheduler;
         private static bool triggerListenerRegistered;
+        private static bool jobListenerRegistered;
         private static readonly CustomTriggerListener CustomTriggerListener = new CustomTriggerListener();
+        private static readonly CustomJobListener CustomJobListener = new CustomJobListener();
 
         private static IScheduler? GetSchedulerSnapshot()
         {
@@ -43,6 +45,11 @@ namespace TaskManager.TaskCommon
         private static bool IsTriggerListenerRegistered()
         {
             return Volatile.Read(ref triggerListenerRegistered);
+        }
+
+        private static bool IsJobListenerRegistered()
+        {
+            return Volatile.Read(ref jobListenerRegistered);
         }
 
         /// <summary>
@@ -99,6 +106,7 @@ namespace TaskManager.TaskCommon
             {
                 IScheduler currentScheduler = await EnsureSchedulerAsync().ConfigureAwait(false);
                 await RegisterTriggerListenerAsync(currentScheduler).ConfigureAwait(false);
+                await RegisterJobListenerAsync(currentScheduler).ConfigureAwait(false);
 
                 if (currentScheduler.IsStarted)
                 {
@@ -123,6 +131,7 @@ namespace TaskManager.TaskCommon
             {
                 IScheduler currentScheduler = await EnsureSchedulerAsync().ConfigureAwait(false);
                 await RegisterTriggerListenerAsync(currentScheduler).ConfigureAwait(false);
+                await RegisterJobListenerAsync(currentScheduler).ConfigureAwait(false);
                 await SchedulePersistedJobsAsync(currentScheduler, true).ConfigureAwait(false);
 
                 LogHelper.WriteLog("任务调度刷新成功！");
@@ -156,6 +165,7 @@ namespace TaskManager.TaskCommon
         {
             IScheduler currentScheduler = await EnsureSchedulerAsync().ConfigureAwait(false);
             await RegisterTriggerListenerAsync(currentScheduler).ConfigureAwait(false);
+            await RegisterJobListenerAsync(currentScheduler).ConfigureAwait(false);
             await ScheduleJobInternalAsync(taskUtil, currentScheduler).ConfigureAwait(false);
         }
 
@@ -271,6 +281,7 @@ namespace TaskManager.TaskCommon
                         Volatile.Write(ref scheduler, null);
                     }
                     Volatile.Write(ref triggerListenerRegistered, false);
+                    Volatile.Write(ref jobListenerRegistered, false);
 
                     LogHelper.WriteLog("任务调度停止！");
                 }
@@ -320,6 +331,7 @@ namespace TaskManager.TaskCommon
                 currentScheduler = await factory.GetScheduler().ConfigureAwait(false);
                 Volatile.Write(ref scheduler, currentScheduler);
                 Volatile.Write(ref triggerListenerRegistered, false);
+                Volatile.Write(ref jobListenerRegistered, false);
                 LogHelper.WriteLog("任务调度初始化成功！");
                 return currentScheduler;
             }
@@ -351,6 +363,30 @@ namespace TaskManager.TaskCommon
 
                 currentScheduler.ListenerManager.AddTriggerListener(CustomTriggerListener, GroupMatcher<TriggerKey>.AnyGroup());
                 Volatile.Write(ref triggerListenerRegistered, true);
+            }
+            finally
+            {
+                SchedulerLock.Release();
+            }
+        }
+
+        private static async Task RegisterJobListenerAsync(IScheduler currentScheduler)
+        {
+            if (IsJobListenerRegistered())
+            {
+                return;
+            }
+
+            await SchedulerLock.WaitAsync().ConfigureAwait(false);
+            try
+            {
+                if (IsJobListenerRegistered())
+                {
+                    return;
+                }
+
+                currentScheduler.ListenerManager.AddJobListener(CustomJobListener, GroupMatcher<JobKey>.AnyGroup());
+                Volatile.Write(ref jobListenerRegistered, true);
             }
             finally
             {

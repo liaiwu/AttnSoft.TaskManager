@@ -1,14 +1,13 @@
 using ICSharpCode.Core;
 using ICSharpCode.SharpDevelop;
 using ICSharpCode.SharpDevelop.Workbench;
-using System;
 using TaskManager.TaskCommon;
 
 namespace TaskManager.Commands
 {
     public class LoadTasks : AbstractMenuCommand
     {
-        UC_TaskList uC_TaskList1;
+        private UC_TaskList? uC_TaskList1;
 
         public override void Run()
         {
@@ -24,6 +23,7 @@ namespace TaskManager.Commands
         {
             try
             {
+                LogHelper.SetConfig();
                 await QuartzHelper.InitScheduler();
                 await QuartzHelper.StartScheduler();
             }

@@ -10,15 +10,14 @@ namespace TaskManager
 {
     public partial class Fm_Task : Form
     {
-        TaskUtil task;
-        bool isNew = true;
+        private TaskUtil? task;
         public Fm_Task()
         {
             InitializeComponent();
         }
         public TaskUtil Task
         {
-            get { return task; }
+            get { return task!; }
         }
         //public string TaskParam
         //{
@@ -38,7 +37,6 @@ namespace TaskManager
 
         public void LoadData(TaskUtil task)
         {
-            isNew = false;
             this.task = task;
             this.txt_taskname.Text = task.TaskName;
             this.txt_TaskParam.Text = task.TaskParam;

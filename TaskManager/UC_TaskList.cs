@@ -21,6 +21,7 @@ namespace TaskManager
             QuartzHelper.OnVetoJobExecution += QuartzHelper_OnVetoJobExecution;
             QuartzHelper.OnTriggerFired += QuartzHelper_OnTriggerFired;
             QuartzHelper.OnTriggerComplete += QuartzHelper_OnTriggerComplete;
+            QuartzHelper.OnTriggerMisfired += QuartzHelper_OnTriggerMisfired;
         }
 
         static UC_TaskList()
@@ -47,29 +48,58 @@ namespace TaskManager
 
         void QuartzHelper_OnTriggerFired(Quartz.ITrigger trigger, Quartz.IJobExecutionContext context)
         {
-            string taskName = GetTaskDisplayName(context);
-            string timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-            WriteOutputLog($"[{timestamp}] [{taskName}] 开始执行任务");
+            try
+            {
+                string taskName = GetTaskDisplayName(context);
+                string timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+                WriteOutputLog($"[{timestamp}] [{taskName}] 开始执行任务");
+            }
+            catch (Exception ex)
+            {
+                LogHelper.WriteLog("QuartzHelper_OnTriggerFired 事件处理异常", ex);
+            }
+        }
+
+        void QuartzHelper_OnTriggerMisfired(Quartz.ITrigger trigger)
+        {
+            try
+            {
+                string taskName = trigger.JobKey.Name;
+                string timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+                WriteOutputLog($"[{timestamp}] [{taskName}] 任务错过触发 (Misfired)");
+                LogHelper.WriteLog($"任务 [{taskName}] 错过触发时间");
+            }
+            catch (Exception ex)
+            {
+                LogHelper.WriteLog("QuartzHelper_OnTriggerMisfired 事件处理异常", ex);
+            }
         }
 
         void QuartzHelper_OnTriggerComplete(Quartz.ITrigger trigger, Quartz.IJobExecutionContext context, Quartz.SchedulerInstruction triggerInstructionCode)
         {
-            string taskid = trigger.JobKey.Name;
-            DateTime nextRuntime = GetNextRuntime(context);
-            string taskName = GetTaskDisplayName(context);
-            string timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-
-            // 输出任务完成日志
-            WriteOutputLog($"[{timestamp}] [{taskName}] 任务完成");
-
-            if (this.InvokeRequired)
+            try
             {
-                MethodInvoker deleg = delegate { UpdateItem(taskid, 0, nextRuntime); };
-                this.BeginInvoke(deleg);
+                string taskid = trigger.JobKey.Name;
+                DateTime nextRuntime = GetNextRuntime(context);
+                string taskName = GetTaskDisplayName(context);
+                string timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+
+                // 输出任务完成日志
+                WriteOutputLog($"[{timestamp}] [{taskName}] 任务完成");
+
+                if (this.InvokeRequired)
+                {
+                    MethodInvoker deleg = delegate { UpdateItem(taskid, 0, nextRuntime); };
+                    this.BeginInvoke(deleg);
+                }
+                else
+                {
+                    UpdateItem(taskid, 0, nextRuntime);
+                }
             }
-            else
+            catch (Exception ex)
             {
-                UpdateItem(taskid, 0, nextRuntime);
+                LogHelper.WriteLog("QuartzHelper_OnTriggerComplete 事件处理异常", ex);
             }
         }
 
@@ -101,19 +131,22 @@ namespace TaskManager
                     output.AppendLine(message);
                 });
             }
-            catch { }
+            catch (Exception ex)
+            {
+                LogHelper.WriteLog($"输出日志失败：{message}", ex);
+            }
         }
 
         private string GetTaskDisplayName(Quartz.IJobExecutionContext context)
         {
             // JobDetail.Description 中存储的是任务名称 (TaskName)
-            var description = context.JobDetail.Description;
+            string? description = context.JobDetail.Description;
             if (!string.IsNullOrEmpty(description))
             {
-                return description;
+                return description!;
             }
             // 回退到使用 TaskID
-            return context.JobDetail.Key.Name;
+            return context.JobDetail.Key.Name ?? string.Empty;
         }
 
         private static DateTime GetNextRuntime(Quartz.IJobExecutionContext context)
@@ -367,6 +400,7 @@ namespace TaskManager
         {
             QuartzHelper.OnVetoJobExecution -= QuartzHelper_OnVetoJobExecution;
             QuartzHelper.OnTriggerComplete -= QuartzHelper_OnTriggerComplete;
+            QuartzHelper.OnTriggerMisfired -= QuartzHelper_OnTriggerMisfired;
             try
             {
                 await QuartzHelper.StopScheduleAsync(false);

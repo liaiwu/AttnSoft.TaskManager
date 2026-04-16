@@ -1,10 +1,6 @@
-﻿using Quartz;
+using Quartz;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
+using TaskManager;
 
 
 namespace TaskManager.TaskCommon
@@ -15,10 +11,10 @@ namespace TaskManager.TaskCommon
     /// </summary>
     public class CustomTriggerListener : ITriggerListener
     {
-        public event TriggerFiredEvent OnTriggerFired;
-        public event VetoJobExecutionEvent OnVetoJobExecution;
-        public event TriggerCompleteEvent OnTriggerComplete;
-        public event TriggerMisfiredEvent OnTriggerMisfired;
+        public event TriggerFiredEvent? OnTriggerFired;
+        public event VetoJobExecutionEvent? OnVetoJobExecution;
+        public event TriggerCompleteEvent? OnTriggerComplete;
+        public event TriggerMisfiredEvent? OnTriggerMisfired;
 
         public string Name
         {
@@ -29,47 +25,64 @@ namespace TaskManager.TaskCommon
         }
 
         /// <summary>
-        /// Job执行时调用
+        /// Job 执行时调用
         /// </summary>
         /// <param name="trigger">触发器</param>
         /// <param name="context">上下文</param>
         public Task TriggerFired(ITrigger trigger, IJobExecutionContext context, CancellationToken cancellationToken = default(CancellationToken))
         {
-            if (OnTriggerFired != null)
+            try
             {
-                OnTriggerFired(trigger,context);
+                OnTriggerFired?.Invoke(trigger, context);
+            }
+            catch (Exception ex)
+            {
+                string taskName = context?.JobDetail?.Description ?? context?.JobDetail?.Key?.Name ?? "Unknown";
+                LogHelper.WriteLog($"任务 [{taskName}] TriggerFired 事件处理异常", ex);
             }
             return Task.CompletedTask;
         }
 
 
         /// <summary>
-        ///  Trigger触发后，job执行时调用本方法。true即否决，job后面不执行。
+        ///  Trigger 触发后，job 执行时调用本方法。true 即否决，job 后面不执行。
         /// </summary>
         /// <param name="trigger"></param>
         /// <param name="context"></param>
         /// <returns></returns>
         public Task<bool> VetoJobExecution(ITrigger trigger, IJobExecutionContext context, CancellationToken cancellationToken = default(CancellationToken))
-        {            
-            if (OnVetoJobExecution != null)
+        {
+            try
             {
-                return Task.FromResult(OnVetoJobExecution(trigger, context));
+                if (OnVetoJobExecution != null)
+                {
+                    return Task.FromResult(OnVetoJobExecution(trigger, context));
+                }
+            }
+            catch (Exception ex)
+            {
+                string taskName = context?.JobDetail?.Description ?? context?.JobDetail?.Key?.Name ?? "Unknown";
+                LogHelper.WriteLog($"任务 [{taskName}] VetoJobExecution 事件处理异常", ex);
             }
             return Task.FromResult(false);
         }
 
         /// <summary>
-        /// Job完成时调用
+        /// Job 完成时调用
         /// </summary>
         /// <param name="trigger">触发器</param>
         /// <param name="context">上下文</param>
         /// <param name="triggerInstructionCode"></param>
         public Task TriggerComplete(ITrigger trigger, IJobExecutionContext context, SchedulerInstruction triggerInstructionCode, CancellationToken cancellationToken = default(CancellationToken))
         {
-           
-            if (OnTriggerComplete != null)
+            try
             {
-                OnTriggerComplete(trigger, context, triggerInstructionCode);
+                OnTriggerComplete?.Invoke(trigger, context, triggerInstructionCode);
+            }
+            catch (Exception ex)
+            {
+                string taskName = context?.JobDetail?.Description ?? context?.JobDetail?.Key?.Name ?? "Unknown";
+                LogHelper.WriteLog($"任务 [{taskName}] TriggerComplete 事件处理异常", ex);
             }
             return Task.CompletedTask;
         }
@@ -80,9 +93,14 @@ namespace TaskManager.TaskCommon
         /// <param name="trigger">触发器</param>
         public Task TriggerMisfired(ITrigger trigger, CancellationToken cancellationToken = default(CancellationToken))
         {
-            if (OnTriggerMisfired != null)
+            try
             {
-                OnTriggerMisfired(trigger);
+                OnTriggerMisfired?.Invoke(trigger);
+            }
+            catch (Exception ex)
+            {
+                string taskName = trigger?.JobKey?.Name ?? "Unknown";
+                LogHelper.WriteLog($"任务 [{taskName}] TriggerMisfired 事件处理异常", ex);
             }
             return Task.CompletedTask;
         }

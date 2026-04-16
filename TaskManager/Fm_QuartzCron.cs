@@ -33,7 +33,8 @@ namespace TaskManager
 
         private void rbClick(object sender, EventArgs e)
         {
-            RadioButton rb = sender as RadioButton;
+            RadioButton? rb = sender as RadioButton;
+            if (rb == null) return;
             switch (rb.Name)
             {
                 case "rbSecEvery":
@@ -274,13 +275,15 @@ namespace TaskManager
                 if (chkWeek.SelectedIndex > -1)
                     chkWeek.SetItemCheckState(chkWeek.SelectedIndex, CheckState.Checked);
             }
-            CheckedListBox chk = sender as CheckedListBox;
+            CheckedListBox? chk = sender as CheckedListBox;
+            if (chk == null) return;
             ArrayList al = new ArrayList();
-            foreach (string item in chk.CheckedItems)
+            foreach (string? item in chk.CheckedItems)
             {
+                if (string.IsNullOrEmpty(item)) continue;
                 if (chk.Name == "chkWeek")
                 {
-                    al.Add(Convert.ToInt32(dicWeek[item]));
+                    al.Add(Convert.ToInt32(dicWeek[item!]));
                 }
                 else
                 {
@@ -328,8 +331,9 @@ namespace TaskManager
 
         private void num_ValueChanged(object sender, EventArgs e)
         {
-            NumericUpDown numUD = sender as NumericUpDown;
-            switch (numUD.Tag.ToString())
+            NumericUpDown? numUD = sender as NumericUpDown;
+            if (numUD == null) return;
+            switch (numUD.Tag?.ToString())
             {
                 case "numSec":
                     txtSecond.Text = numSecStart.Value + "/" + numSecEvery.Value;
@@ -375,7 +379,8 @@ namespace TaskManager
 
         private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            LinkLabel ll = sender as LinkLabel;
+            LinkLabel? ll = sender as LinkLabel;
+            if (ll == null) return;
             Process myProcess = new Process();
             myProcess.StartInfo.FileName = "iexplore.exe";
             myProcess.StartInfo.Arguments = ll.Text;

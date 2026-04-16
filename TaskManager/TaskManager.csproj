@@ -17,7 +17,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="AttnSoft.SharpDevelop.Core" Version="5.5.6" />
     <PackageReference Include="AttnSoft.SqlData" Version="5.5.2" />
+    <PackageReference Include="AttnSoft.Windows.Workbench" Version="5.5.6" />
     <PackageReference Include="Quartz" Version="3.16.1" />
     <PackageReference Include="System.Resources.Extensions" Version="4.6.0" />
   </ItemGroup>
@@ -25,12 +27,6 @@
   <ItemGroup>
     <Reference Include="AttnSoft.DevControls">
       <HintPath>..\..\DevExpress\DLL\net462\AttnSoft.DevControls.dll</HintPath>
-    </Reference>
-    <Reference Include="AttnSoft.SharpDevelop.Core">
-      <HintPath>..\..\DevExpress\DLL\net462\AttnSoft.SharpDevelop.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="AttnSoft.Windows.Workbench">
-      <HintPath>..\..\DevExpress\DLL\net462\AttnSoft.Windows.Workbench.dll</HintPath>
     </Reference>
     <Reference Include="DevExpress.Utils.v25.2">
       <HintPath>..\..\..\DevExpressDLL\DevExpress.Utils.v25.2.dll</HintPath>

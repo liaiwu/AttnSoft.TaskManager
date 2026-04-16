@@ -20,11 +20,39 @@ namespace TaskManager
         public static readonly log4net.ILog loginfo = log4net.LogManager.GetLogger("loginfo");
         public static readonly log4net.ILog logerror = log4net.LogManager.GetLogger("logerror");
 
+        /// <summary>
+        /// 使用代码配置 log4net（不需要配置文件）
+        /// </summary>
         public static void SetConfig()
         {
-            
-            log4net.Config.XmlConfigurator.Configure();
-            //log4net.Config.XmlConfigurator.Configure()
+            // 创建 RollingFileAppender
+            var fileAppender = new RollingFileAppender
+            {
+                Name = "LogFileAppender",
+                File = FileHelper.GetAbsolutePath("/Logs/app.log"),
+                AppendToFile = true,
+                MaxSizeRollBackups = 100,
+                MaximumFileSize = "1MB",
+                RollingStyle = RollingFileAppender.RollingMode.Size,
+                Encoding = Encoding.UTF8
+            };
+
+            // 设置日志格式
+            var layout = new PatternLayout("%-5p %d{yyyy-MM-dd HH:mm:ss.fff} [%c] %m%n");
+            layout.ActivateOptions();
+            fileAppender.Layout = layout;
+            fileAppender.ActivateOptions();
+
+            // 确保日志目录存在
+            string logDir = Path.GetDirectoryName(fileAppender.File);
+            if (!string.IsNullOrEmpty(logDir) && !Directory.Exists(logDir))
+            {
+                Directory.CreateDirectory(logDir);
+            }
+
+            // 使用 BasicConfigurator 配置默认日志库
+            // 注意：这会覆盖任何现有的配置
+            log4net.Config.BasicConfigurator.Configure(fileAppender);
         }
 
         public static void SetConfig(FileInfo configFile)
@@ -126,10 +154,10 @@ namespace TaskManager
                 return loginfo;
             }
             repositoryName = GetRepositoryNameName(repositoryName, level);
-            ILog log = s_LogDict[repositoryName] as ILog;
+            ILog? log = s_LogDict[repositoryName] as ILog;
             if (log == null)
             {
-                ILoggerRepository repository = null;
+                ILoggerRepository? repository = null;
                 //未找到则创建，多线程下很有可能创建时，就存在了
                 try
                 {
@@ -137,7 +165,7 @@ namespace TaskManager
                 }
                 catch (Exception)
                 {
-                    repository = LogManager.GetRepository(repositoryName);
+                    repository = LogManager.GetRepository(repositoryName) ?? throw new InvalidOperationException("无法获取日志库");
                 }
 
                 if (string.IsNullOrEmpty(level))
@@ -197,6 +225,12 @@ namespace TaskManager
         private static void LoadFileAppender(ILoggerRepository repository)
         {
             string txtLogPath = FileHelper.GetAbsolutePath(string.Format("/Logs/{0}.log", repository.Name));
+            // 确保日志目录存在
+            string logDir = Path.GetDirectoryName(txtLogPath);
+            if (!Directory.Exists(logDir))
+            {
+                Directory.CreateDirectory(logDir);
+            }
             RollingFileAppender fileAppender = new RollingFileAppender();
             fileAppender.Name = "LogFileAppender";
             fileAppender.File = txtLogPath;
