@@ -9,3 +9,8 @@
 /TaskManager.Test/bin
 /TaskManager.Test/obj
 /.dotnet
+/Exe/Logs
+/Exe/test.txt
+/Exe/Data/layouts/Default.xml
+/Exe/Data/Data--.db
+/Exe/Data/AttnSoftSharpDevelopProperties.xml
