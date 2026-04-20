@@ -1,27 +1,46 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <TargetFramework>net472</TargetFramework>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>disable</ImplicitUsings>
-    <LangVersion>latest</LangVersion>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net472</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>disable</ImplicitUsings>
+		<LangVersion>latest</LangVersion>
+		<IsTestProject>true</IsTestProject>
+		<OutputType>Library</OutputType>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\TaskManager\TaskManager.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
+		<PackageReference Include="xunit" Version="2.6.6" />
+		<PackageReference Include="xunit.runner.visualstudio" Version="2.5.6">
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+			<PrivateAssets>all</PrivateAssets>
+		</PackageReference>
+	</ItemGroup>
 
-  <ItemGroup>
-    <Reference Include="AttnSoft.SqlData">
-      <HintPath>..\..\DevExpress\DLL\net462\AttnSoft.SqlData.dll</HintPath>
-    </Reference>
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\TaskManager\TaskManager.csproj" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <None Update="..\Data.db">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
+	<ItemGroup>
+		<Reference Include="AttnSoft.DevControls">
+			<HintPath>..\..\DevExpress\DLL\net462\AttnSoft.DevControls.dll</HintPath>
+		</Reference>
+		<Reference Include="AttnSoft.SharpDevelop.Core">
+			<HintPath>..\..\DevExpress\DLL\net462\AttnSoft.SharpDevelop.Core.dll</HintPath>
+		</Reference>
+		<Reference Include="AttnSoft.Windows.Workbench">
+			<HintPath>..\..\DevExpress\DLL\net462\AttnSoft.Windows.Workbench.dll</HintPath>
+		</Reference>
+		<Reference Include="log4net">
+			<HintPath>..\..\DevExpress\DLL\net462\log4net.dll</HintPath>
+		</Reference>
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Update="..\Data.db">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
 
 </Project>
