@@ -1,72 +1,70 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <OutputType>Library</OutputType>
-    <TargetFramework>net472</TargetFramework>
-    <Nullable>enable</Nullable>
-    <UseWindowsForms>true</UseWindowsForms>
-    <ImplicitUsings>enable</ImplicitUsings>
-	<LangVersion>latest</LangVersion>
-    <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
-	  <Platforms>x86;x64;AnyCPU;</Platforms><!--这是支持的平台-->
-	  <PlatformTarget>x86</PlatformTarget><!--这是编译生成的平台-->
-  </PropertyGroup>
+	<PropertyGroup>
+		<OutputType>Library</OutputType>
+		<TargetFramework>net462</TargetFramework>
+		<Nullable>enable</Nullable>
+		<UseWindowsForms>true</UseWindowsForms>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<LangVersion>latest</LangVersion>
+		<GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
+		<Platforms>x86;x64;AnyCPU;</Platforms><!--这是支持的平台-->
 
-  <ItemGroup>
-    <Compile Remove="Commands\StartWorkbenchCommand.cs" />
-  </ItemGroup>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="AttnSoft.SharpDevelop.Core" Version="5.5.6" />
-    <PackageReference Include="AttnSoft.SqlData" Version="5.5.2" />
-    <PackageReference Include="AttnSoft.Windows.Workbench" Version="5.5.6" />
-    <PackageReference Include="Quartz" Version="3.16.1" />
-    <PackageReference Include="System.Resources.Extensions" Version="4.6.0" />
-  </ItemGroup>
+	<ItemGroup>
+		<Compile Remove="Commands\StartWorkbenchCommand.cs" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <Reference Include="AttnSoft.DevControls">
-      <HintPath>..\..\DevExpress\DLL\net462\AttnSoft.DevControls.dll</HintPath>
-    </Reference>
-    <Reference Include="DevExpress.Utils.v25.2">
-      <HintPath>..\..\..\DevExpressDLL\DevExpress.Utils.v25.2.dll</HintPath>
-    </Reference>
-    <Reference Include="DevExpress.XtraBars.v25.2">
-      <HintPath>..\..\..\DevExpressDLL\DevExpress.XtraBars.v25.2.dll</HintPath>
-    </Reference>
-    <Reference Include="DevExpress.XtraEditors.v25.2">
-      <HintPath>..\..\..\DevExpressDLL\DevExpress.XtraEditors.v25.2.dll</HintPath>
-    </Reference>
-    <Reference Include="log4net">
-      <HintPath>..\..\DevExpress\DLL\net462\log4net.dll</HintPath>
-    </Reference>
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="AttnSoft.DevControls" Version="2.6.0" />
+		<PackageReference Include="AttnSoft.SharpDevelop.Core" Version="5.5.6" />
+		<PackageReference Include="AttnSoft.SqlData" Version="5.5.2" />
+		<PackageReference Include="AttnSoft.Windows.Workbench" Version="5.5.6" />
+		<PackageReference Include="Quartz" Version="3.16.1" />
+		<PackageReference Include="System.Resources.Extensions" Version="4.6.0" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <Compile Update="Properties\Resources.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <Compile Update="Properties\Settings.Designer.cs">
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Settings.settings</DependentUpon>
-    </Compile>
-  </ItemGroup>
+	<ItemGroup>
+		<Reference Include="DevExpress.Utils.v25.2">
+			<HintPath>..\..\..\DevExpressDLL\DevExpress.Utils.v25.2.dll</HintPath>
+		</Reference>
+		<Reference Include="DevExpress.XtraBars.v25.2">
+			<HintPath>..\..\..\DevExpressDLL\DevExpress.XtraBars.v25.2.dll</HintPath>
+		</Reference>
+		<Reference Include="DevExpress.XtraEditors.v25.2">
+			<HintPath>..\..\..\DevExpressDLL\DevExpress.XtraEditors.v25.2.dll</HintPath>
+		</Reference>
+		<Reference Include="log4net">
+			<HintPath>..\..\DevExpress\DLL\net462\log4net.dll</HintPath>
+		</Reference>
+	</ItemGroup>
 
-  <ItemGroup>
-    <EmbeddedResource Update="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-  </ItemGroup>
+	<ItemGroup>
+		<Compile Update="Properties\Resources.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Resources.resx</DependentUpon>
+		</Compile>
+		<Compile Update="Properties\Settings.Designer.cs">
+			<DesignTimeSharedInput>True</DesignTimeSharedInput>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Settings.settings</DependentUpon>
+		</Compile>
+	</ItemGroup>
 
-  <ItemGroup>
-    <None Update="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
-  </ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Update="Properties\Resources.resx">
+			<Generator>ResXFileCodeGenerator</Generator>
+			<LastGenOutput>Resources.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Update="Properties\Settings.settings">
+			<Generator>SettingsSingleFileGenerator</Generator>
+			<LastGenOutput>Settings.Designer.cs</LastGenOutput>
+		</None>
+	</ItemGroup>
 
 </Project>
