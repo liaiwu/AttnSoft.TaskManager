@@ -17,9 +17,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="AttnSoft.DevControls" Version="2.6.0" />
+		<PackageReference Include="AttnSoft.DevControls" Version="3.0.0" />
 		<PackageReference Include="AttnSoft.SharpDevelop.Core" Version="5.5.6" />
-		<PackageReference Include="AttnSoft.SqlData" Version="5.5.2" />
+		<PackageReference Include="AttnSoft.SqlData" Version="5.5.5" />
+		<PackageReference Include="AttnSoft.SysObjects" Version="2.6.0" />
 		<PackageReference Include="AttnSoft.Windows.Workbench" Version="5.5.6" />
 		<PackageReference Include="Quartz" Version="3.16.1" />
 		<PackageReference Include="System.Resources.Extensions" Version="4.6.0" />
